@@ -1,0 +1,44 @@
+{
+  "name": "k8s-workshop-demo",
+  "version": "1.0.0",
+  "description": "K3s Workshop Demo — SAP CAP + OpenUI5",
+  "repository": "https://github.com/your-org/k8s-workshop-demo",
+  "scripts": {
+    "start": "cds serve",
+    "dev": "cds watch",
+    "deploy": "cds deploy --to postgres"
+  },
+  "dependencies": {
+    "@sap/cds": "^8",
+    "@cap-js/postgres": "^1",
+    "express": "^4.21.0",
+    "pg": "^8.13.0",
+    "undici": "^6.21.0"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^8",
+    "@cap-js/sqlite": "^1"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "[development]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": ":memory:"
+          }
+        },
+        "[production]": {
+          "kind": "postgres",
+          "schema_evolution": "auto"
+        }
+      },
+      "auth": {
+        "kind": "dummy"
+      }
+    },
+    "server": {
+      "port": 4004
+    }
+  }
+}

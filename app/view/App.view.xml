@@ -1,0 +1,33 @@
+<mvc:View
+    controllerName="workshop.demo.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m">
+    <Shell appWidthLimited="false">
+        <App id="app">
+            <pages>
+                <Page title="{i18n>appTitle}">
+                    <headerContent>
+                        <Button text="Bot" icon="sap-icon://discussion" type="Emphasized" press=".onBotPress" />
+                        <Button text="OData" icon="sap-icon://database" type="Transparent" press=".onODataPress" />
+                    </headerContent>
+                    <content>
+                        <IconTabBar id="idIconTabBar" select=".onTabSelect" class="sapUiResponsiveContentPadding">
+                            <items>
+                                <IconTabFilter key="dashboard" text="Dashboard" icon="sap-icon://home">
+                                    <mvc:XMLView viewName="workshop.demo.view.Dashboard"/>
+                                </IconTabFilter>
+                                <IconTabFilter key="notes" text="Notes" icon="sap-icon://notes" count="{app>/notes/length}">
+                                    <mvc:XMLView viewName="workshop.demo.view.Notes"/>
+                                </IconTabFilter>
+                                <IconTabFilter key="participants" text="Participants" icon="sap-icon://group" count="{app>/participants/length}">
+                                    <mvc:XMLView viewName="workshop.demo.view.Participants"/>
+                                </IconTabFilter>
+                            </items>
+                        </IconTabBar>
+                    </content>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>

@@ -1,0 +1,17 @@
+<mvc:View
+    controllerName="workshop.demo.controller.Participants"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Panel headerText="Workshop Participants — /odata/v4/workshop/Participants" class="sapUiSmallMargin">
+        <MessageStrip text="Register yourself! This entity is shared across all workshop deployments via the same PostgreSQL database." type="Success" showIcon="true" class="sapUiSmallMarginBottom" />
+        <Toolbar>
+            <Input id="participantName" placeholder="Your name" width="250px" />
+            <Button text="Register Me" type="Emphasized" icon="sap-icon://add-employee" press=".onAddParticipant" />
+            <ToolbarSpacer />
+            <Button text="Refresh" icon="sap-icon://refresh" press=".onRefresh" />
+        </Toolbar>
+        <List items="{path: 'app>/participants'}" noDataText="No participants registered yet.">
+            <StandardListItem title="{app>name}" description="Pod: {app>hostname}" icon="sap-icon://employee" info="{app>createdAt}" infoState="Success" />
+        </List>
+    </Panel>
+</mvc:View>

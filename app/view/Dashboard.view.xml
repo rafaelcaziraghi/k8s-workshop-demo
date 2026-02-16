@@ -1,0 +1,76 @@
+<mvc:View
+    controllerName="workshop.demo.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+    xmlns="sap.m">
+    <ObjectHeader
+        title="{dashboard>/app/app}"
+        intro="{dashboard>/features/greeting}"
+        number="{dashboard>/app/version}" />
+    <l:Grid defaultSpan="XL4 L6 M6 S12" hSpacing="1" vSpacing="1">
+        
+        <!-- App Info Card -->
+        <VBox class="sapUiSmallMargin">
+            <Title text="Application Info" level="H3" class="sapUiTinyMarginBottom"/>
+            <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                <ObjectStatus icon="sap-icon://sys-monitor" state="Information" class="sapUiTinyMarginEnd"/>
+                <Text text="{dashboard>/app/environment}" />
+            </HBox>
+             <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                <ObjectStatus icon="sap-icon://laptop" state="None" class="sapUiTinyMarginEnd" />
+                <Text text="{dashboard>/app/hostname}" />
+            </HBox>
+            <HBox alignItems="Center">
+                 <ObjectStatus icon="sap-icon://history" state="Success" class="sapUiTinyMarginEnd" />
+                 <Text text="Uptime: {dashboard>/app/uptime}s" />
+            </HBox>
+        </VBox>
+
+        <!-- Database Status Card -->
+        <VBox class="sapUiSmallMargin">
+             <Title text="Database" level="H3" class="sapUiTinyMarginBottom"/>
+             <!-- If not configured -->
+             <MessageStrip 
+                text="Not Configured (Expected in Step 1)" 
+                type="Warning" 
+                showIcon="true" 
+                visible="{dashboard>/dbStatus/notConfigured}" />
+
+             <!-- If Configured -->
+             <VBox visible="{= !${dashboard>/dbStatus/notConfigured} }">
+                <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <ObjectStatus text="PostgreSQL" icon="sap-icon://database" state="{= ${dashboard>/dbStatus/pg} === 'Connected' ? 'Success' : 'Error'}" class="sapUiSmallMarginEnd" />
+                    <ObjectStatus text="CAP Service" icon="sap-icon://cloud" state="{= ${dashboard>/dbStatus/cap} === 'sqlite' ? 'Information' : 'Success'}" />
+                </HBox>
+                <HBox>
+                    <Button icon="sap-icon://database" text="Test CAP" press=".onTestCapDb" type="Ghost" class="sapUiTinyMarginEnd"/>
+                    <Button icon="sap-icon://search" text="Test Raw PG" press=".onTestRawPg" type="Ghost"/>
+                </HBox>
+             </VBox>
+        </VBox>
+
+        <!-- Feature Flags Card -->
+        <VBox class="sapUiSmallMargin">
+            <Title text="Feature Flags" level="H3" class="sapUiTinyMarginBottom"/>
+            <HBox wrap="Wrap">
+               <ObjectStatus title="Greeting" text="{dashboard>/features/greeting}" state="Indication05" class="sapUiSmallMarginEnd"/>
+               <ObjectStatus title="Color" text="{dashboard>/features/color}" state="Indication03" class="sapUiSmallMarginEnd"/>
+               <ObjectStatus title="Proxy" text="{dashboard>/proxyStatus}" state="{= ${dashboard>/proxy/configured} ? 'Success' : 'None'}" icon="sap-icon://world" />
+            </HBox>
+        </VBox>
+
+        <!-- Network Tests Card -->
+        <VBox class="sapUiSmallMargin">
+            <Title text="Network Tests" level="H3" class="sapUiTinyMarginBottom"/>
+            <HBox>
+                <Button icon="sap-icon://action" text="Internal" press=".onTestInternal" class="sapUiTinyMarginEnd"/>
+                <Button icon="sap-icon://world" text="External" press=".onTestExternal" class="sapUiTinyMarginEnd"/>
+                <Button icon="sap-icon://search" text="DNS" press=".onTestDns"/>
+            </HBox>
+             <Panel visible="{= !!${dashboard>/resultsText} }" expandable="true" expanded="true" headerText="Results" width="100%" class="sapUiTinyMarginTop">
+                <Text text="{dashboard>/resultsText}" class="sapUiSmallMargin" />
+            </Panel>
+        </VBox>
+
+    </l:Grid>
+</mvc:View>

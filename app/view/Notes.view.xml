@@ -1,0 +1,34 @@
+<mvc:View
+    controllerName="workshop.demo.controller.Notes"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Panel headerText="CAP OData Notes — /odata/v4/workshop/Notes" class="sapUiSmallMargin">
+        <MessageStrip text="These notes are managed by CAP via OData v4. All CRUD operations go through the CAP service layer to PostgreSQL (or SQLite in dev)." type="Information" showIcon="true" class="sapUiSmallMarginBottom" />
+        <Toolbar>
+            <Input placeholder="Title" value="{app>/newTitle}" width="200px" />
+            <Input placeholder="Content" value="{app>/newContent}" width="300px" />
+            <Select selectedKey="{app>/newCategory}">
+                <core:Item key="General" text="General" />
+                <core:Item key="K8s" text="Kubernetes" />
+                <core:Item key="CAP" text="CAP" />
+                <core:Item key="DevOps" text="DevOps" />
+            </Select>
+            <Button text="Add Note" type="Emphasized" icon="sap-icon://add" press=".onAddNote" />
+            <ToolbarSpacer />
+            <Button text="Refresh" icon="sap-icon://refresh" press=".onRefresh" />
+        </Toolbar>
+        <List items="{path: 'app>/notes'}">
+            <ObjectListItem title="{app>title}" number="Priority: {app>priority}" type="Active" press=".onNotePress">
+                <attributes>
+                    <ObjectAttribute text="{app>content}" />
+                    <ObjectAttribute text="Category: {app>category}" />
+                </attributes>
+                <firstStatus>
+                    <ObjectStatus text="{app>createdAt}" state="Information" />
+                </firstStatus>
+            </ObjectListItem>
+        </List>
+    </Panel>
+    <MessageStrip text="Tip: Click a note to delete it. You can also access the raw OData API at /odata/v4/workshop/Notes" type="None" showIcon="true" />
+</mvc:View>

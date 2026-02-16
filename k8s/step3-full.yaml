@@ -1,0 +1,177 @@
+# ============================================
+# STEP 3: Full Deployment
+# ============================================
+# Replace ALL occurrences of <yourname> with
+# your first and last name (lowercase, no spaces).
+# Example: workshop-andreashafner
+# ============================================
+
+# --- Secret ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: workshop-<yourname>-secret
+  namespace: sandbox
+type: Opaque
+data:
+  DB_PASSWORD: d29ya3Nob3BfcGFzc18xMjM=
+---
+# --- Deployment ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workshop-<yourname>
+  namespace: sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workshop-<yourname>
+  template:
+    metadata:
+      labels:
+        app: workshop-<yourname>
+    spec:
+      # --- Init Container ---
+      initContainers:
+        - name: schema-deploy
+          image: registry.container.dev.local/workshop/<yourname>:v1.0
+          imagePullPolicy: Always
+          command: ["npx", "cds", "deploy"]
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: CDS_REQUIRES_DB_KIND
+              value: "postgres"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_HOST
+              value: "postgres.data.svc.cluster.local"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_PORT
+              value: "5432"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_DATABASE
+              value: "workshop"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_USER
+              value: "workshop_user"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-<yourname>-secret
+                  key: DB_PASSWORD
+      containers:
+        - name: workshop-<yourname>
+          image: registry.container.dev.local/workshop/<yourname>:v1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4004
+          env:
+            # --- App Config ---
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "4004"
+            - name: APP_NAME
+              value: "workshop-<yourname>"
+            - name: APP_VERSION
+              value: "1.0"
+
+            # --- Feature Flags ---
+            - name: FEATURE_GREETING
+              value: "Full deployment with all features! 🎉"
+            - name: FEATURE_COLOR
+              value: "#f59e0b"
+
+            # --- Raw PG Pool (K8s connectivity demo) ---
+            - name: DB_HOST
+              value: "postgres.data.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "workshop"
+            - name: DB_USER
+              value: "workshop_user"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-<yourname>-secret
+                  key: DB_PASSWORD
+
+            # --- CAP CDS Database (OData entities) ---
+            - name: CDS_REQUIRES_DB_CREDENTIALS_HOST
+              value: "postgres.data.svc.cluster.local"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_PORT
+              value: "5432"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_DATABASE
+              value: "workshop"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_USER
+              value: "workshop_user"
+            - name: CDS_REQUIRES_DB_CREDENTIALS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-<yourname>-secret
+                  key: DB_PASSWORD
+
+            # --- Internal Service Communication ---
+            - name: INTERNAL_SERVICE_URL
+              value: "http://n8n.services.svc.cluster.local:5678/healthz"
+
+            # --- Bot Configuration ---
+            - name: N8N_CHAT_URL
+              value: "https://n8n-dev.container.dev.local/webhook/0a7daf42-4283-4b04-8b1a-4a0d60186e49/chat"
+
+            # --- Corporate Proxy (external API access) ---
+            - name: HTTP_PROXY
+              value: "http://10.55.0.55:80"
+            - name: HTTPS_PROXY
+              value: "http://10.55.0.55:80"
+            - name: NO_PROXY
+              value: "localhost,127.0.0.1,postgres.data.svc.cluster.local,n8n.services.svc.cluster.local,10.42.0.0/16,10.43.0.0/16,.container.dev.local,.svc,.cluster.local"
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4004
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4004
+            initialDelaySeconds: 10
+            periodSeconds: 5
+---
+# --- Service ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workshop-<yourname>
+  namespace: sandbox
+spec:
+  selector:
+    app: workshop-<yourname>
+  ports:
+    - port: 4004
+      targetPort: 4004
+---
+# --- Ingress ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: workshop-<yourname>
+  namespace: sandbox
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+    - host: workshop-<yourname>.container.dev.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: workshop-<yourname>
+                port:
+                  number: 4004
+  tls:
+    - hosts:
+        - workshop-<yourname>.container.dev.local
+      secretName: traefik-tls
