@@ -51,7 +51,7 @@ sap.ui.define([
                     var statusState = 'Success';
 
                     if (showNotConfiguredWarning) {
-                        statusMessage = '⚠️ Not Configured (Expected in Step 1)';
+                        statusMessage = '⚠️ Not Configured (Expected in Step 2)';
                         statusState = 'Warning';
                     } else if (isLocalDev) {
                         statusMessage = 'ℹ️ Local Dev (SQLite In-Memory)';

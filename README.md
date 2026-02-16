@@ -1,4 +1,4 @@
-# K3s Workshop Demo
+# K8s Workshop Demo
 
 A demo application for the Kubernetes deployment workshop at `container.dev.local`.
 
@@ -35,8 +35,13 @@ k8s-workshop-demo/
 │   ├── server.js                     # Custom CAP server with API routes
 │   └── workshop-service.cds          # CDS service definition
 ├── app/
-│   ├── index.html                    # OpenUI5 dashboard
-│   └── bot.html                      # n8n embedded chat bot
+│   ├── Component.js                  # App Component definition
+│   ├── manifest.json                 # App configuration & descriptor
+│   ├── index.html                    # Bootstrap file
+│   ├── bot.html                      # n8n embedded chat bot
+│   ├── view/                         # XML Views (App, Dashboard, Notes, Participants)
+│   ├── controller/                   # Controllers (Logic for each View)
+│   └── i18n/                         # Internationalization (Text bundles)
 ├── db/
 │   └── schema.cds                    # CDS data model
 ├── k8s/
@@ -45,9 +50,9 @@ k8s-workshop-demo/
 │   └── step3-full.yaml               # + proxy, internal services, bot
 ├── Dockerfile                        # Multi-stage build
 ├── .dockerignore
-├── .cdsrc.json                       # CDS configuration
+├── .gitignore
 ├── package.json
-├── WORKSHOP.md                       # Full workshop guide
+├── WORKSHOP.md
 └── README.md
 ```
 
