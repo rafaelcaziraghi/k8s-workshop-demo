@@ -1,7 +1,7 @@
 # ============================================
 # STEP 1: Basic Deployment (No Database)
 # ============================================
-# Replace ALL occurrences of <yourname> with
+# Replace ALL occurrences of rafaelcaziraghi with
 # your first and last name (lowercase, no spaces).
 # Example: workshop-andreashafner
 # ============================================
@@ -9,21 +9,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: workshop-<yourname>
+  name: workshop-rafaelcaziraghi
   namespace: sandbox
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: workshop-<yourname>
+      app: workshop-rafaelcaziraghi
   template:
     metadata:
       labels:
-        app: workshop-<yourname>
+        app: workshop-rafaelcaziraghi
     spec:
       containers:
-        - name: workshop-<yourname>
-          image: registry.container.dev.local/workshop/<yourname>:v1.0
+        - name: workshop-rafaelcaziraghi
+          image: registry.container.dev.local/workshop/rafaelcaziraghi:v1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 4004
@@ -33,11 +33,11 @@ spec:
             - name: PORT
               value: "4004"
             - name: APP_NAME
-              value: "workshop-<yourname>"
+              value: "workshop-rafaelcaziraghi"
             - name: APP_VERSION
               value: "1.0"
             - name: FEATURE_GREETING
-              value: "Hello from <yourname>'s deployment! 🚀"
+              value: "Hello from rafaelcaziraghi's deployment! 🚀"
             - name: FEATURE_COLOR
               value: "#4ade80"
           livenessProbe:
@@ -56,11 +56,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: workshop-<yourname>
+  name: workshop-rafaelcaziraghi
   namespace: sandbox
 spec:
   selector:
-    app: workshop-<yourname>
+    app: workshop-rafaelcaziraghi
   ports:
     - port: 4004
       targetPort: 4004
@@ -68,23 +68,23 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: workshop-<yourname>
+  name: workshop-rafaelcaziraghi
   namespace: sandbox
   annotations:
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   rules:
-    - host: workshop-<yourname>.container.dev.local
+    - host: workshop-rafaelcaziraghi.container.dev.local
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: workshop-<yourname>
+                name: workshop-rafaelcaziraghi
                 port:
                   number: 4004
   tls:
     - hosts:
-        - workshop-<yourname>.container.dev.local
+        - workshop-rafaelcaziraghi.container.dev.local
       secretName: traefik-tls
